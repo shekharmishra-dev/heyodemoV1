@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heyo Interactive Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #eef2f3; display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        .demo-container { display: flex; gap: 40px; align-items: flex-start; max-width: 900px; }
+        .instructions { width: 400px; }
+        
+        /* This makes a div look like a smartphone */
+        .phone { 
+            width: 320px; height: 600px; background: #fff; 
+            border: 12px solid #1a1a1a; border-radius: 40px; 
+            position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); 
+        }
+        .screen-header { background: #ff5722; color: white; padding: 25px 15px; text-align: center; font-weight: bold; }
+        .app-content { padding: 15px; }
+        .feature-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn { background: #ff5722; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #e64a19; }
+        input { width: 90%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+        .verified { display: none; text-align: center; color: #2196F3; font-weight: bold; padding: 10px; border: 2px dashed #2196F3; border-radius: 10px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="instructions">
+        <h1>Experience Heyo</h1>
+        <p>See how Heyo transforms your small business into a professional brand in 60 seconds.</p>
+    </div>
+
+    <div class="demo-container">
+        <div class="phone" id="demo-phone">
+            <div class="screen-header">Heyo Business</div>
+            
+            <div class="app-content">
+                <div class="feature-card" id="step1">
+                    <label><strong>Your Business Name</strong></label>
+                    <input type="text" id="bizName" placeholder="e.g. Sharma Electronics">
+                </div>
+
+                <div class="feature-card" id="step2">
+                    <p><strong>Step 1: Smart IVR</strong></p>
+                    <button class="btn" onclick="simulateIVR()">Test My Greeting</button>
+                </div>
+
+                <div class="feature-card" id="step3">
+                    <p><strong>Step 2: Staff Tracker</strong></p>
+                    <div style="font-size: 13px; color: #555;">
+                        📞 Rahul (Sales) - 14:02 <span style="color: blue;">[Listen]</span><br>
+                        📞 Priya (Support) - 15:45 <span style="color: blue;">[Listen]</span>
+                    </div>
+                </div>
+
+                <div class="verified" id="step4">
+                    🛡️ Verified Business Identity<br>
+                    <span style="font-size: 11px;">(Powered by KYC Integration)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+
+    <script>
+        const driver = window.driver.js.driver;
+
+        const tour = driver({
+            showProgress: true,
+            steps: [
+                { element: '#step1', popover: { title: 'Personalize It', description: 'Type your business name to see how it looks in the app.', side: "right" } },
+                { element: '#step2', popover: { title: 'No More Missed Calls', description: 'Click the button to hear your automated receptionist. This sounds professional to your customers!', side: "right" } },
+                { element: '#step3', popover: { title: 'Staff Accountability', description: 'Even if you aren\'t in the office, you can listen to every staff call recording here.', side: "right" } },
+                { element: '#step4', popover: { title: 'The Trust Badge', description: 'Complete KYC to get this badge. It ensures your calls aren\'t marked as spam by TrueCaller.', side: "top" } }
+            ]
+        });
+
+        // Run the tour automatically
+        tour.drive();
+
+        function simulateIVR() {
+            const name = document.getElementById('bizName').value || "your business";
+            // This uses the computer's built-in voice
+            const speech = new SpeechSynthesisUtterance("Welcome to " + name + ". Press 1 for Sales. Press 2 for Support.");
+            window.speechSynthesis.speak(speech);
+            
+            // Show the verified badge after they test the IVR
+            document.getElementById('step4').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
