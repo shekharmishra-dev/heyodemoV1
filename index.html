@@ -3,168 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heyo | Smart Business Number Demo</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+    <title>Heyo Learning Center & Demo</title>
     <style>
-        :root { --heyo-orange: #ff5722; --heyo-blue: #2196F3; --bg-gray: #f4f7f6; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-gray); margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #333; }
+        :root { --heyo-orange: #ff5722; --text-main: #1a1a1a; --bg-light: #f8f9fa; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg-light); display: flex; height: 100vh; overflow: hidden; }
         
-        .header { text-align: center; max-width: 600px; margin-bottom: 30px; }
-        .header h1 { color: #1a1a1a; margin-bottom: 10px; }
-        .header p { color: #666; line-height: 1.5; }
+        /* Sidebar Video Library */
+        .sidebar { width: 350px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; background: var(--heyo-orange); color: white; }
+        .video-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .video-item { 
+            padding: 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; 
+            border: 1px solid #eee; transition: 0.2s; position: relative;
+        }
+        .video-item:hover { background: #fff5f2; border-color: var(--heyo-orange); }
+        .video-item.watched { border-left: 5px solid #4cd964; }
+        .video-item.active { background: #fff5f2; border: 1px solid var(--heyo-orange); }
+        .video-item h4 { margin: 0 0 5px 0; font-size: 14px; }
+        .video-tag { font-size: 11px; color: #888; text-transform: uppercase; }
 
-        .demo-layout { display: flex; gap: 40px; max-width: 1000px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        /* Main Content Area */
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; }
+        .video-player-container { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: #000; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         
-        /* The Virtual Smartphone */
-        .phone { 
-            width: 320px; height: 620px; background: #fff; border: 12px solid #1a1a1a; 
-            border-radius: 40px; position: sticky; top: 20px; overflow: hidden; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12); z-index: 10;
+        /* Floating Phone Simulator */
+        .phone-overlay { 
+            position: absolute; right: 40px; bottom: 40px; width: 280px; height: 500px; 
+            background: #fff; border: 8px solid #1a1a1a; border-radius: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; transform: scale(0.9);
         }
-        .screen-header { background: var(--heyo-orange); color: white; padding: 25px 15px; text-align: center; font-weight: bold; }
+        .phone-header { background: var(--heyo-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 14px; }
+        .phone-body { padding: 15px; font-size: 13px; }
         
-        /* Capability Cards */
-        .cards-container { flex: 1; min-width: 320px; max-width: 500px; }
-        .capability-card { 
-            background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s;
-        }
-        .capability-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        .capability-card h2 { margin-top: 0; color: var(--heyo-orange); font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
-        
-        /* Setup Roadmap Styling */
-        details { margin-top: 15px; background: #f9f9f9; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
-        summary { cursor: pointer; font-weight: 600; color: #555; margin-bottom: 10px; outline: none; }
-        .roadmap { border-left: 2px solid var(--heyo-orange); margin-left: 10px; padding-left: 20px; }
-        .step { position: relative; margin-bottom: 12px; color: #444; }
-        .step::before { 
-            content: attr(data-step); position: absolute; left: -31px; top: 0; 
-            background: var(--heyo-orange); color: white; width: 20px; height: 20px; 
-            border-radius: 50%; text-align: center; font-size: 11px; line-height: 20px; 
-        }
-
-        .btn { background: var(--heyo-orange); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-blue { background: var(--heyo-blue); }
-        input { width: 94%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top: 10px; }
-        
-        /* Live Simulation Elements */
-        .call-popup { position: absolute; top: 40px; left: 10px; right: 10px; background: #1a1a1a; color: white; padding: 20px; border-radius: 20px; text-align: center; z-index: 100; animation: slideDown 0.4s ease; }
-        @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+        .btn { background: var(--heyo-orange); color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Experience Heyo Phone</h1>
-        <p>Convert your smartphone into a professional business hub. See how it works below.</p>
-    </div>
-
-    <div class="demo-layout">
-        <div class="phone" id="phone-ui">
-            <div class="screen-header">Heyo Business</div>
-            <div style="padding: 15px;">
-                <div id="phone-content">
-                    <p style="text-align: center; color: #999; margin-top: 100px;">Click a card to start the demo</p>
-                </div>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>Heyo Academy</h3>
+            <p style="font-size: 12px; margin: 0;">Master your business comms</p>
+        </div>
+        <div class="video-list">
+            <div class="video-item active" onclick="loadVideo('q8S3e0ZlNB8', this, 'intro')">
+                <span class="video-tag">Step 1</span>
+                <h4>App Walkthrough & KYC</h4>
+            </div>
+            <div class="video-item" onclick="loadVideo('YOUR_IVR_VIDEO_ID', this, 'ivr')">
+                <span class="video-tag">Step 2</span>
+                <h4>Setting up your IVR</h4>
+            </div>
+            <div class="video-item" onclick="loadVideo('YOUR_WABA_VIDEO_ID', this, 'waba')">
+                <span class="video-tag">Step 3</span>
+                <h4>WhatsApp Marketing API</h4>
             </div>
         </div>
+    </div>
 
-        <div class="cards-container">
-            
-            <div class="capability-card" id="card-ivr">
-                <h2>📞 Professional IVR & Greeting</h2>
-                <p>Greet every caller with a custom welcome message and route calls to the right team.</p>
-                <input type="text" id="bizNameInput" placeholder="Enter your Business Name">
-                <button class="btn" onclick="testGreeting()">Test My Greeting</button>
-                
-                <details>
-                    <summary>How to get this (6 Steps)</summary>
-                    <div class="roadmap">
-                        <div class="step" data-step="1">Install Heyo App</div>
-                        <div class="step" data-step="2">Sign up with Mobile OTP</div>
-                        <div class="step" data-step="3">Choose your City STD Code</div>
-                        <div class="step" data-step="4"><strong>Complete KYC (Get Verified)</strong></div>
-                        <div class="step" data-step="5">Choose your Pro Plan</div>
-                        <div class="step" data-step="6">Pay & Go Live instantly</div>
-                    </div>
-                </details>
+    <div class="main-content">
+        <div class="video-player-container">
+            <iframe id="main-player" width="100%" height="100%" src="https://www.youtube.com/embed/q8S3e0ZlNB8" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <p style="color: #666;">Watch the video on the left, then try the feature on the right →</p>
+
+        <div class="phone-overlay">
+            <div class="phone-header">Heyo Sandbox</div>
+            <div class="phone-body" id="sandbox-content">
+                <h4>Try it now!</h4>
+                <p>Complete your KYC to unlock all features.</p>
+                <button class="btn" onclick="alert('Simulating KYC Process...')">Start Aadhaar KYC</button>
             </div>
-
-            <div class="capability-card" id="card-waba">
-                <h2>💬 Official WhatsApp Business API</h2>
-                <p>Run marketing campaigns and manage all customer chats from a single team inbox.</p>
-                <button class="btn btn-blue" onclick="simulateWhatsApp()">Simulate WhatsApp Inbox</button>
-                <details>
-                    <summary>Setup Roadmap</summary>
-                    <div class="roadmap">
-                        <div class="step" data-step="1">Select WhatsApp Add-on</div>
-                        <div class="step" data-step="2">Connect Facebook Business Page</div>
-                        <div class="step" data-step="3">Get WABA Approval (Automated)</div>
-                        <div class="step" data-step="4">Upload Customer Contact List</div>
-                    </div>
-                </details>
-            </div>
-
-            <div class="capability-card" id="card-calls">
-                <h2>📊 Staff Call Monitoring</h2>
-                <p>Listen to recordings and track missed calls to ensure no lead is ever lost.</p>
-                <button class="btn" onclick="simulateCall()">Simulate Incoming Call</button>
-            </div>
-
         </div>
     </div>
 
     <script>
-        function updatePhone(html) {
-            document.getElementById('phone-content').innerHTML = html;
+        function loadVideo(id, element, mode) {
+            // Update YouTube Player
+            document.getElementById('main-player').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            
+            // UI Updates
+            document.querySelectorAll('.video-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active', 'watched');
+
+            // Sync the Phone Sandbox
+            const sandbox = document.getElementById('sandbox-content');
+            if(mode === 'ivr') {
+                sandbox.innerHTML = `<h4>IVR Tester</h4><input type="text" placeholder="Biz Name" id="bn" style="width:90%; padding:8px; margin-bottom:10px;"><button class="btn" onclick="speak()">Preview Greeting</button>`;
+            } else if (mode === 'waba') {
+                sandbox.innerHTML = `<h4>WhatsApp API</h4><p>Send bulk updates to 1000+ customers.</p><button class="btn">Launch Campaign</button>`;
+            } else {
+                sandbox.innerHTML = `<h4>Welcome</h4><p>Follow the Step 1 video to register.</p><button class="btn">Register Now</button>`;
+            }
         }
 
-        function testGreeting() {
-            const name = document.getElementById('bizNameInput').value || "Your Business";
-            updatePhone(`
-                <div style="text-align:center; margin-top:50px;">
-                    <div style="font-size:40px;">📢</div>
-                    <h3>Greeting Live</h3>
-                    <p style="background:#f0f0f0; padding:15px; border-radius:10px; font-style:italic;">
-                        "Welcome to ${name}. Press 1 for Sales, 2 for Support..."
-                    </p>
-                </div>
-            `);
-            const msg = new SpeechSynthesisUtterance("Welcome to " + name + ". Press 1 for Sales, 2 for Support.");
-            window.speechSynthesis.speak(msg);
-        }
-
-        function simulateWhatsApp() {
-            updatePhone(`
-                <div style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
-                    <strong>WhatsApp Inbox</strong>
-                </div>
-                <div style="background:#e5ddd5; height:350px; padding:10px; border-radius:5px; font-size:12px;">
-                    <div style="background:white; padding:8px; border-radius:5px; margin-bottom:10px; width:70%;">Customer: Hello, I need a booking!</div>
-                    <div style="background:#dcf8c6; padding:8px; border-radius:5px; margin-left:30%; margin-bottom:10px;">Staff: Sure! When would you like to visit?</div>
-                </div>
-            `);
-        }
-
-        function simulateCall() {
-            const popup = document.createElement('div');
-            popup.className = 'call-popup';
-            popup.id = "active-call";
-            popup.innerHTML = `
-                <p style="font-size:12px; opacity:0.7;">INCOMING VIA HEYO</p>
-                <h3>+91 98765 43210</h3>
-                <div style="display:flex; justify-content:space-around; margin-top:20px;">
-                    <button onclick="this.parentElement.parentElement.remove()" style="background:red; border:none; color:white; padding:10px 20px; border-radius:20px;">Decline</button>
-                    <button onclick="acceptCall()" style="background:green; border:none; color:white; padding:10px 20px; border-radius:20px;">Accept</button>
-                </div>
-            `;
-            document.getElementById('phone-ui').appendChild(popup);
-        }
-
-        function acceptCall() {
-            const popup = document.getElementById('active-call');
-            popup.innerHTML = `<h3>Connected</h3><p>00:04</p><button onclick="this.parentElement.remove()" class="btn">End Call</button>`;
-            updatePhone(`<h3>Call Recording...</h3><p>Staff: "Hello, how can I help you?"</p>`);
+        function speak() {
+            const name = document.getElementById('bn').value || "Your Business";
+            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Welcome to " + name));
         }
     </script>
 </body>
