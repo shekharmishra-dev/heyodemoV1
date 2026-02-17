@@ -3,103 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heyo Learning Center & Demo</title>
+    <title>Heyo Immersive Demo</title>
     <style>
-        :root { --heyo-orange: #ff5722; --text-main: #1a1a1a; --bg-light: #f8f9fa; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg-light); display: flex; height: 100vh; overflow: hidden; }
+        :root { --heyo-orange: #ff5722; --bg: #f8f9fa; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; justify-content: center; overflow: hidden; }
         
-        /* Sidebar Video Library */
-        .sidebar { width: 350px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
-        .sidebar-header { padding: 20px; background: var(--heyo-orange); color: white; }
-        .video-list { flex: 1; overflow-y: auto; padding: 10px; }
-        .video-item { 
-            padding: 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; 
-            border: 1px solid #eee; transition: 0.2s; position: relative;
-        }
-        .video-item:hover { background: #fff5f2; border-color: var(--heyo-orange); }
-        .video-item.watched { border-left: 5px solid #4cd964; }
-        .video-item.active { background: #fff5f2; border: 1px solid var(--heyo-orange); }
-        .video-item h4 { margin: 0 0 5px 0; font-size: 14px; }
-        .video-tag { font-size: 11px; color: #888; text-transform: uppercase; }
+        .welcome-screen { text-align: center; max-width: 600px; }
+        .start-btn { background: var(--heyo-orange); color: white; border: none; padding: 20px 40px; border-radius: 50px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(255,87,34,0.3); transition: 0.3s; }
+        .start-btn:hover { transform: scale(1.05); }
 
-        /* Main Content Area */
-        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; }
-        .video-player-container { width: 100%; max-width: 800px; aspect-ratio: 16/9; background: #000; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .demo-canvas { display: none; width: 90%; max-width: 1000px; gap: 50px; align-items: center; justify-content: center; }
         
-        /* Floating Phone Simulator */
-        .phone-overlay { 
-            position: absolute; right: 40px; bottom: 40px; width: 280px; height: 500px; 
-            background: #fff; border: 8px solid #1a1a1a; border-radius: 30px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; transform: scale(0.9);
-        }
-        .phone-header { background: var(--heyo-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 14px; }
-        .phone-body { padding: 15px; font-size: 13px; }
-        
-        .btn { background: var(--heyo-orange); color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer; font-weight: bold; }
+        /* The Dynamic Phone Visual */
+        .phone-frame { width: 300px; height: 580px; background: white; border: 10px solid #222; border-radius: 40px; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
+        .phone-header { background: var(--heyo-orange); color: white; padding: 20px; text-align: center; font-weight: bold; }
+        .phone-display { padding: 20px; text-align: center; }
+
+        /* Highlight Animations */
+        .highlight-card { background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--heyo-orange); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,87,34,0.4); } 70% { box-shadow: 0 0 0 20px rgba(255,87,34,0); } 100% { box-shadow: 0 0 0 0 rgba(255,87,34,0); } }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h3>Heyo Academy</h3>
-            <p style="font-size: 12px; margin: 0;">Master your business comms</p>
-        </div>
-        <div class="video-list">
-            <div class="video-item active" onclick="loadVideo('q8S3e0ZlNB8', this, 'intro')">
-                <span class="video-tag">Step 1</span>
-                <h4>App Walkthrough & KYC</h4>
-            </div>
-            <div class="video-item" onclick="loadVideo('YOUR_IVR_VIDEO_ID', this, 'ivr')">
-                <span class="video-tag">Step 2</span>
-                <h4>Setting up your IVR</h4>
-            </div>
-            <div class="video-item" onclick="loadVideo('YOUR_WABA_VIDEO_ID', this, 'waba')">
-                <span class="video-tag">Step 3</span>
-                <h4>WhatsApp Marketing API</h4>
-            </div>
-        </div>
+    <div id="welcome" class="welcome-screen">
+        <h1>Welcome to the Heyo Experience</h1>
+        <p>Turn on your sound and click below to begin your immersive tour.</p>
+        <button class="start-btn" onclick="startImmersiveDemo()">Start Web Demo</button>
     </div>
 
-    <div class="main-content">
-        <div class="video-player-container">
-            <iframe id="main-player" width="100%" height="100%" src="https://www.youtube.com/embed/q8S3e0ZlNB8" frameborder="0" allowfullscreen></iframe>
-        </div>
-        <p style="color: #666;">Watch the video on the left, then try the feature on the right →</p>
+    <div id="canvas" class="demo-canvas">
+        <div id="narration-text" style="width: 400px; font-size: 24px; font-weight: 300; line-height: 1.4; color: #444;">
+            </div>
 
-        <div class="phone-overlay">
-            <div class="phone-header">Heyo Sandbox</div>
-            <div class="phone-body" id="sandbox-content">
-                <h4>Try it now!</h4>
-                <p>Complete your KYC to unlock all features.</p>
-                <button class="btn" onclick="alert('Simulating KYC Process...')">Start Aadhaar KYC</button>
+        <div class="phone-frame">
+            <div class="phone-header">Heyo Business</div>
+            <div id="phone-ui" class="phone-display">
+                <p>Ready to go...</p>
             </div>
         </div>
     </div>
 
     <script>
-        function loadVideo(id, element, mode) {
-            // Update YouTube Player
-            document.getElementById('main-player').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-            
-            // UI Updates
-            document.querySelectorAll('.video-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active', 'watched');
+        const synth = window.speechSynthesis;
+        const phoneUI = document.getElementById('phone-ui');
+        const narrationText = document.getElementById('narration-text');
 
-            // Sync the Phone Sandbox
-            const sandbox = document.getElementById('sandbox-content');
-            if(mode === 'ivr') {
-                sandbox.innerHTML = `<h4>IVR Tester</h4><input type="text" placeholder="Biz Name" id="bn" style="width:90%; padding:8px; margin-bottom:10px;"><button class="btn" onclick="speak()">Preview Greeting</button>`;
-            } else if (mode === 'waba') {
-                sandbox.innerHTML = `<h4>WhatsApp API</h4><p>Send bulk updates to 1000+ customers.</p><button class="btn">Launch Campaign</button>`;
-            } else {
-                sandbox.innerHTML = `<h4>Welcome</h4><p>Follow the Step 1 video to register.</p><button class="btn">Register Now</button>`;
-            }
+        function startImmersiveDemo() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('canvas').style.display = 'flex';
+            
+            runScript();
         }
 
-        function speak() {
-            const name = document.getElementById('bn').value || "Your Business";
-            window.speechSynthesis.speak(new SpeechSynthesisUtterance("Welcome to " + name));
+        async function speak(text) {
+            return new Promise((resolve) => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9; // Professional, steady pace
+                narrationText.innerText = text;
+                utterance.onend = resolve;
+                synth.speak(utterance);
+            });
+        }
+
+        async function runScript() {
+            // PART 1: Introduction
+            await speak("Welcome to Heyo's Web Demo. In this demo, we will see how Heyo helps you manage all your business communications through one platform.");
+            
+            // PART 2: Virtual Number & Team Calls
+            phoneUI.innerHTML = `
+                <div class="highlight-card">
+                    <h3>Virtual Number</h3>
+                    <p>011-4084-XXXX</p>
+                    <small>For you and your team</small>
+                </div>
+            `;
+            await speak("First, Heyo gives you one virtual number for your entire team. Every inbound and outbound call is tracked right here, ensuring professional identity for every customer interaction.");
+
+            // PART 3: WhatsApp (WABA)
+            phoneUI.innerHTML = `
+                <div class="highlight-card" style="border-color: #25D366;">
+                    <h3>Official WhatsApp</h3>
+                    <p>Marketing Campaigns</p>
+                    <div style="background:#eee; height:10px; border-radius:5px; margin:10px 0;"></div>
+                    <div style="background:#eee; height:10px; border-radius:5px; width:60%;"></div>
+                </div>
+            `;
+            await speak("Next, you can set up an official WhatsApp Business API account. Customize your templates and launch marketing campaigns to reach thousands of customers instantly.");
+
+            // PART 4: IVR
+            phoneUI.innerHTML = `
+                <div class="highlight-card" style="border-color: #2196F3;">
+                    <h3>Smart IVR</h3>
+                    <p>"Press 1 for Sales..."</p>
+                </div>
+            `;
+            await speak("Finally, give your business a brand look with a customized greeting message and IVR. Route calls to the right staff member even when you are on the move.");
+
+            // PART 5: Conclusion
+            narrationText.innerText = "Ready to start?";
+            phoneUI.innerHTML = `<h3>Experience Heyo</h3><button class="start-btn" style="font-size:14px; padding:10px;" onclick="location.reload()">Replay Demo</button>`;
+            await speak("All these capabilities combine into a single platform. Follow the steps ahead to join over 1 lakh businesses on Heyo.");
         }
     </script>
 </body>
